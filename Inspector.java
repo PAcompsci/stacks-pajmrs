@@ -10,6 +10,8 @@
 
 // A lot of method calls don't work with the LinkedList class because of recursive next
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.*;
 import java.lang.reflect.*;
 
@@ -19,8 +21,8 @@ public class Inspector implements Runnable{
   private Thread t;
   private Thread inspecteeThread;
 
-  public Inspector(Thread iT)
-    iT = inspecteeThread;
+  public Inspector(Thread iT){
+    inspecteeThread = iT;
     integer_options = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14};
     string_options = new String[]{"dog", "cat," ,"house", "computer science"};
   }
@@ -32,21 +34,21 @@ public class Inspector implements Runnable{
     * @return an ArrayList containing MethodReport objects for each method
     * in the class
     */
-    private ArrayList<MethodReport> InspectAll(String className) {
-    
+    private ArrayList<MethodReport> InspectAll(String className) throws NotImplementedException{
+      throw new NotImplementedException();
   }
 
 
   public void run()
   {
-      while(thread.getState()!=Thread.State.TERMINATED)
+      while(inspecteeThread.getState()!=Thread.State.TERMINATED)
       {
         try
         {
           Map<Thread,StackTraceElement[]> stacks = Thread.getAllStackTraces();
           System.out.println(Arrays.toString(stacks.get(inspecteeThread)));
         }
-        catch (InterruptedException e)
+        catch (Exception e)
         {
         }
       }
@@ -60,7 +62,7 @@ public class Inspector implements Runnable{
   }
 
    public static void main(String args[]) {
-     Inspectee R2 = new Inspectee();
+     Inspectee R2 = new Inspectee("TestClass");
      Inspector R1 = new Inspector(R2.getT());
      R1.start();
      R2.start();

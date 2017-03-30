@@ -23,7 +23,7 @@ class Inspectee implements Runnable {
       integer_options = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14};
       string_options = new String[]{"dog", "cat," ,"house", "computer science"};
       t = new Thread(this, "Inspectee object's thread");
-      report = new ArrayList<MethodReport>();
+      report = this.getMethods(this.className);//new ArrayList<MethodReport>();
     }
 
     public Thread getT() {
