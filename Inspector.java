@@ -71,8 +71,8 @@ public class Inspector implements Runnable{
      System.out.println(e);
    }
    return report;
-
   }
+
 
   public void run() {
       for(int i = 4; i > 0; i--) {
