@@ -6,12 +6,19 @@
  * Date: March 28, 2017
  * Course: CSC630: Data Structures and Algorithms
  */
+import java.util.*;
+import java.lang.reflect.*;
 
 class Inspectee implements Runnable {
+    private int[] integer_options;
+    private String[] string_options;
     private Thread t;
+    private Thread inspecteeThread;
 
-    Inspectee() {
-        t = new Thread(this, "Inspectee object's thread");
+    public Inspectee() {
+      integer_options = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+      string_options = new String[]{"dog", "cat," ,"house", "computer science"};
+      t = new Thread(this, "Inspectee object's thread");
     }
 
     public Thread getT() {return t;}
@@ -27,7 +34,7 @@ class Inspectee implements Runnable {
     * @return an ArrayList containing MethodReport objects for each method
     * in the class
     */
-    private ArrayList<MethodReport> InspectAll() {
+    private ArrayList<MethodReport> InspectAll(String className) {
       ArrayList<MethodReport> report = new ArrayList<MethodReport>();
       try {
       Class<?> c = Class.forName(className);

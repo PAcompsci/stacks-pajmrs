@@ -29,6 +29,7 @@ public class MethodReport{
   */
 
   // not done
+  /*
   public boolean isRecursive() {
     //.getAllStackTraces
     Map<Thread,StackTraceElement[]> stacks = Thread.getAllStackTraces();
@@ -52,6 +53,7 @@ public class MethodReport{
     }
     return false;
   }
+  */
 
   // not done
   public boolean isBranchedRecursive() {
