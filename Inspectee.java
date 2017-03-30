@@ -34,7 +34,7 @@ class Inspectee implements Runnable {
     * @return an ArrayList containing MethodReport objects for each method
     * in the class
     */
-    private ArrayList<MethodReport> InspectAll(String className) {
+    private ArrayList<MethodReport> getMethods(String className) {
       ArrayList<MethodReport> report = new ArrayList<MethodReport>();
       try {
       Class<?> c = Class.forName(className);
@@ -61,7 +61,9 @@ class Inspectee implements Runnable {
           }
           Object class_instance =
           Class.forName(className).newInstance();
-
+          System.out.println("  Input: " + Arrays.toString(new_params));
+          System.out.println("  Returned: " + m.invoke(class_instance, new_params));
+          System.out.println("  Is recursive or not: " );
           report.add(new MethodReport(m.getName()));
         } catch(Throwable e) {
           System.out.println("Exception thrown during method execution: " + e);
