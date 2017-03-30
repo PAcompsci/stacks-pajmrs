@@ -14,32 +14,27 @@ class Inspectee implements Runnable {
     private String[] string_options;
     private Thread t;
     private Thread inspecteeThread;
+    private Method[] methods;
+    ArrayList<MethodReport> report;
+    private String className;
 
-    public Inspectee() {
+    public Inspectee(String clazz) {
+      className = clazz;
       integer_options = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14};
       string_options = new String[]{"dog", "cat," ,"house", "computer science"};
       t = new Thread(this, "Inspectee object's thread");
+      report = new ArrayList<MethodReport>();
     }
 
-    public Thread getT() {return t;}
-
-    public void run() {
-        waitAWhile(50);
+    public Thread getT() {
+      return t;
     }
     
-    /**
-    * Inspects the given class for its methods with their return values if
-    * callable, and adds each method to a string.
-    * @param className the name of the class to be inspected
-    * @return an ArrayList containing MethodReport objects for each method
-    * in the class
-    */
-    private ArrayList<MethodReport> getMethods(String className) {
-      ArrayList<MethodReport> report = new ArrayList<MethodReport>();
-      try {
-      Class<?> c = Class.forName(className);
-      Object t = c.newInstance();
-      Method[] methods = c.getDeclaredMethods();
+    public ArrayList<MethodReport> getReport() {
+      return report;
+    }
+
+    public void run() {
       for(Method m: methods) {
         try {
           System.out.println("\n" + m);
@@ -64,9 +59,30 @@ class Inspectee implements Runnable {
           System.out.println("  Input: " + Arrays.toString(new_params));
           System.out.println("  Returned: " + m.invoke(class_instance, new_params));
           System.out.println("  Is recursive or not: " );
-          report.add(new MethodReport(m.getName()));
         } catch(Throwable e) {
           System.out.println("Exception thrown during method execution: " + e);
+        }
+      }
+    }
+    
+    /**
+    * Inspects the given class for its methods with their return values if
+    * callable, and adds each method to a string.
+    * @param className the name of the class to be inspected
+    * @return an ArrayList containing MethodReport objects for each method
+    * in the class
+    */
+    private ArrayList<MethodReport> getMethods(String className) {
+      report = new ArrayList<MethodReport>();
+      try {
+      Class<?> c = Class.forName(className);
+      Object t = c.newInstance();
+      this.methods = c.getDeclaredMethods();
+      for(Method m: methods) {
+        try {
+          report.add(new MethodReport(m.getName()));
+        } catch(Throwable e) {
+          System.out.println(e);
         }
      }
    } catch(Throwable e) {
