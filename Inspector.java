@@ -33,44 +33,7 @@ public class Inspector implements Runnable{
     * in the class
     */
     private ArrayList<MethodReport> InspectAll(String className) {
-      ArrayList<MethodReport> report = new ArrayList<MethodReport>();
-      try {
-      Class<?> c = Class.forName(className);
-      Object t = c.newInstance();
-      Method[] methods = c.getDeclaredMethods();
-      for(Method m: methods) {
-        try {
-          System.out.println("\n" + m);
-          Class<?>[] p = m.getParameterTypes();
-          Object[] new_params = new Object[p.length];
-          for(int i = 0; i < p.length; i++) {
-            Random rand = new Random();
-            System.out.println(p[i]);
-            if(p[i].isInstance(int.class)) {
-              new_params[i] = integer_options[rand.nextInt(integer_options.length)];
-            }
-            else if(p[i].isInstance(String.class)) {
-              new_params[i] = string_options[rand.nextInt(string_options.length)];
-            }
-            else {
-              // Unsure of how to deal with generic types
-              new_params[i] = integer_options[rand.nextInt(integer_options.length)];
-            }
-          }
-          Object class_instance =
-          Class.forName(className).newInstance();
-          System.out.println("  Input: " + Arrays.toString(new_params));
-          System.out.println("  Returned: " + m.invoke(class_instance, new_params));
-          System.out.println("  Is recursive or not: " );
-          report.add(new MethodReport(m.getName()));
-        } catch(Throwable e) {
-          System.out.println("Exception thrown during method execution: " + e);
-        }
-     }
-   } catch(Throwable e) {
-     System.out.println(e);
-   }
-   return report;
+    
   }
 
 
@@ -97,8 +60,11 @@ public class Inspector implements Runnable{
   }
 
    public static void main(String args[]) {
-     Inspector a = new Inspector();
-     a.InspectAll(args[0]);
+     Inspectee R2 = new Inspectee();
+     Inspector R1 = new Inspector(R2.getT());
+     R1.start();
+     R2.start();
+     R1.InspectAll(args[0]);
 
     }
 }
