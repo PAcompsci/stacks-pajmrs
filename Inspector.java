@@ -32,7 +32,7 @@ public class Inspector implements Runnable{
     * @return an ArrayList containing MethodReport objects for each method
     * in the class
     */
-    private ArrayList<MethodReport> InspectAll() {
+    private ArrayList<MethodReport> InspectAll(String className) {
       ArrayList<MethodReport> report = new ArrayList<MethodReport>();
       try {
       Class<?> c = Class.forName(className);
@@ -74,21 +74,22 @@ public class Inspector implements Runnable{
   }
 
 
-  public void run() {
-      for(int i = 4; i > 0; i--) {
-          try {
-              Map<Thread,StackTraceElement[]> stacks = Thread.getAllStackTraces();
-              System.out.println(Arrays.toString(stacks.get(inspecteeThread)));
-          } catch (InterruptedException e) {
-          }
+  public void run()
+  {
+      while(thread.getState()!=Thread.State.TERMINATED)
+      {
+        try
+        {
+          Map<Thread,StackTraceElement[]> stacks = Thread.getAllStackTraces();
+          System.out.println(Arrays.toString(stacks.get(inspecteeThread)));
+        }
+        catch (InterruptedException e)
+        {
+        }
       }
   }
 
   public void start () {
-      /* All examples I found online have this `if (t == null)` line.
-       * I don't really see the necessity of it, but I didn't want to
-       * just delete it and have that cause y'all all kinds of bugs.
-       */
       if (t == null) {
           t = new Thread(this, "Inspector object's thread");
           t.start();
