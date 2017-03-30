@@ -5,7 +5,7 @@
  * Date: March 28, 2017
  * Course: CSC630 Data Structures and Algorithms
  */
-
+package mwe;
 import java.lang.reflect.*;
 
 public class GetMethods {

@@ -6,7 +6,7 @@
  * Date: March 28, 2017
  * Course: CSC630: Data Structures and Algorithms
  */
-
+package mwe;
 class Inspectee implements Runnable {
     private Thread t;
 

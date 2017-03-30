@@ -6,7 +6,7 @@
  * Date: March 28, 2017
  * Course: CSC630: Data Structures and Algorithms
  */
-
+package mwe;
 import java.util.Map;
 import java.util.Arrays;
 
