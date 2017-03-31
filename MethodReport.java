@@ -11,6 +11,7 @@
  // NOTE: Use reflection API to call methods by name
 
 import java.util.Arrays;
+import java.util.ArrayList;
 
 public class MethodReport{
   private String methodName;
@@ -35,7 +36,7 @@ public class MethodReport{
       if (timeline.get(r).peek().equals(previous)) {
         return true;
       }
-      previous = timeline[r].peek();
+      previous = timeline.get(r).peek();
     }
     return false;
   }

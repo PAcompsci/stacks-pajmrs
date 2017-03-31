@@ -86,4 +86,8 @@
   public String toString() {
     return contents + "";
   }
+
+  public LinkedList<T> allElements() {
+    return contents;
+  }
 }
