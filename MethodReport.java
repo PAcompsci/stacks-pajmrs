@@ -29,38 +29,60 @@ public class MethodReport{
   */
 
   // not done
-  /*
   public boolean isRecursive() {
-    //.getAllStackTraces
-    Map<Thread,StackTraceElement[]> stacks = Thread.getAllStackTraces();
-    for (Thread newT : stacks) {
-      StackTraceElement[] newStack = stacks.get(newT);
-      String recentMethod = "";
-      for (int i = 0; i < newStack.length; i++) {
-        //this goes through the specific stacktrace element array and checks whether the previous
-        //contained the same method
-        StackTraceElement stackElement = newStack[i];
-        if (stackElement.getMethodName().equals(recentMethod)) {
-          //2 methods used in a row?
-          //does this mean that its recursive??
-          return true;
-        }
-        recentMethod = stackElement.getMethodName();
+    String previous = "";
+    for (int r = 0; r < timeline.size(); r++) {
+      if (timeline.get(r).peek().equals(previous)) {
+        return true;
       }
-      //get the new thread iterate through the array of stack traceelements
-      //look at each stack trace element
-      //determine whether it is recursive
+      previous = timeline[r].peek();
     }
     return false;
   }
-  */
 
   // not done
   public boolean isBranchedRecursive() {
-    //branched recursive is when the method calls another method and then goes back and returns to being recursive
+    //if it goes up by one
+    //branch recursion would be multiple calls ina stack but not increasing/decreasing by one
+    //only returns true
+    ArrayList<Integer> totalMethodCalls = new ArrayList<Integer>(timeline.size()-1);
+    //because array is initialized to empty
+    for (int i = 0; i < totalMethodCalls.size(); i++) {
+      totalMethodCalls.set(i, 0);
+    }
+    for (int r = 0; r < timeline.size(); r++) {
+      //check if monotonic
+      //NEED THE METHOD: public LinkedList<T> allElements() {
+      LinkedList<String> singleStack = timeline.get(r).allElements();
+      int counter = 0;
+      for (int i = 0; i < singleStack.size(); i++) {
+        if (singleStack.get(i).equals(methodName)) {
+          totalMethodCalls.set(r, totalMethodCalls.get(r) + 1);
+        }
+      }
+    }
+    //Now we have the arraylist of number of method calls in each stack
+    //now we need to check the patterns between the lines
+    //if the list follows and up and then down patter -> linearly recursive
+    //if the list goes up and down and up and down (etc.) -> branched recursivity
+    int max = totalMethodCalls.get(0);
+    for (int i = 1; i < totalMethodCalls.size(); i++) {
+      //this portion tests whether the list goes up and down once or multiple times
+      if (totalMethodCalls.get(i) < max) {
+        //then the decline starts if its linear
 
+        for (int x = i; x < totalMethodCalls.size(); x++) {
+          if (totalMethodCalls.get(x) < max) {
+            max = totalMethodCalls.get(x);
+          }
+          else {
+            //there was another spike in the number of method calls
+            return true;
+          }
+        }
+      }
+    }
 
     return false;
-
   }
 }
