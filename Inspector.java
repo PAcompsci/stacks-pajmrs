@@ -51,37 +51,9 @@ public class Inspector implements Runnable{
     ArrayList<Map<Thread, StackTraceElement[]>> list = new ArrayList<Map<Thread, StackTraceElement[]>>();
       while(inspecteeThread.getState()!=Thread.State.TERMINATED)
       {
-        // Wait for the Inspectee to be prepared to execute each method
-        try {
-          System.out.println("INSPECTOR IS WAITING");
-          synchronized (lock) {
-            lock.wait();
-          }
-        } catch(Exception e){}
-
-        try {
-          Thread.sleep(50);
-        } catch(Exception e){}
-        if(inspecteeThread.getState()==Thread.State.TERMINATED) {
-          break;
-        }
-
-        // Poll until thread is runnable
-        while (inspecteeThread.getState() != Thread.State.RUNNABLE);
-        while (inspecteeThread.getState()!=Thread.State.WAITING) {
-          list.add(Thread.getAllStackTraces());
-        }
-        // Unblock the inspectee thread
-        System.out.println("RELEASTED INSPECTEE");
-        synchronized(lock) {
-          lock.notifyAll();
-        }
-
+        list.add(Thread.getAllStackTraces());
         counter++;
 
-      }
-      synchronized (lock) {
-        lock.notifyAll();
       }
       for (int i = 0; i < list.size(); i++) {
         System.out.println(Arrays.toString(list.get(i).get(inspecteeThread)));
