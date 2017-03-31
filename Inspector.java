@@ -21,10 +21,16 @@ public class Inspector implements Runnable{
   private Thread t;
   private Thread inspecteeThread;
 
+  private final Object lock = new Object();
+
   public Inspector(Thread iT){
     inspecteeThread = iT;
     integer_options = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14};
     string_options = new String[]{"dog", "cat," ,"house", "computer science"};
+  }
+
+  public Object getLock() {
+    return lock;
   }
 
     /**
@@ -41,22 +47,54 @@ public class Inspector implements Runnable{
 
   public void run()
   {
+    int counter = 0;
+    ArrayList<Map<Thread, StackTraceElement[]>> list = new ArrayList<Map<Thread, StackTraceElement[]>>();
       while(inspecteeThread.getState()!=Thread.State.TERMINATED)
       {
-        try
-        {
-          Map<Thread,StackTraceElement[]> stacks = Thread.getAllStackTraces();
-          System.out.println(Arrays.toString(stacks.get(inspecteeThread)));
+        // Wait for the Inspectee to be prepared to execute each method
+        try {
+          System.out.println("INSPECTOR IS WAITING");
+          synchronized (lock) {
+            lock.wait();
+          }
+        } catch(Exception e){}
+
+        try {
+          Thread.sleep(50);
+        } catch(Exception e){}
+        if(inspecteeThread.getState()==Thread.State.TERMINATED) {
+          break;
         }
-        catch (Exception e)
-        {
+
+        // Poll until thread is runnable
+        while (inspecteeThread.getState() != Thread.State.RUNNABLE);
+        while (inspecteeThread.getState()!=Thread.State.WAITING) {
+          list.add(Thread.getAllStackTraces());
         }
+        // Unblock the inspectee thread
+        System.out.println("RELEASTED INSPECTEE");
+        synchronized(lock) {
+          lock.notifyAll();
+        }
+
+        counter++;
+
       }
+      synchronized (lock) {
+        lock.notifyAll();
+      }
+      for (int i = 0; i < list.size(); i++) {
+        System.out.println(Arrays.toString(list.get(i).get(inspecteeThread)));
+      }
+      //System.out.println(Arrays.toString(stacks.get(inspecteeThread)));
+
+      System.out.println("LOOPED " + counter + " TIMES");
   }
 
   public void start () {
       if (t == null) {
           t = new Thread(this, "Inspector object's thread");
+          t.setPriority(Thread.MAX_PRIORITY);
           t.start();
       }
   }
@@ -64,9 +102,10 @@ public class Inspector implements Runnable{
    public static void main(String args[]) {
      Inspectee R2 = new Inspectee("TestClass");
      Inspector R1 = new Inspector(R2.getT());
+     R2.setLock(R1.getLock());
      R1.start();
      R2.start();
-     R1.InspectAll(args[0]);
+     //R1.InspectAll(args[0]);
 
     }
 }

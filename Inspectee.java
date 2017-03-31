@@ -18,9 +18,15 @@ class Inspectee implements Runnable {
     ArrayList<MethodReport> report;
     private String className;
 
+    private Object lock;
+
+    public void setLock(Object obj) { this.lock = obj; }
+
+
+
     public Inspectee(String clazz) {
       className = clazz;
-      integer_options = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+      integer_options = new int[]{100};//1,2,3,4,5,6,7,8,9,10,11,12,13,14};
       string_options = new String[]{"dog", "cat," ,"house", "computer science"};
       t = new Thread(this, "Inspectee object's thread");
       report = this.getMethods(this.className);//new ArrayList<MethodReport>();
@@ -34,15 +40,18 @@ class Inspectee implements Runnable {
       return report;
     }
 
-    public void run() {
+    public void run() throws NullPointerException {
+        if (lock == null) {
+            throw new NullPointerException();
+        }
       for(Method m: methods) {
         try {
-          System.out.println("\n" + m);
+          //System.out.println("\n" + m);
           Class<?>[] p = m.getParameterTypes();
           Object[] new_params = new Object[p.length];
           for(int i = 0; i < p.length; i++) {
             Random rand = new Random();
-            System.out.println(p[i]);
+            //System.out.println(p[i]);
             if(p[i].isInstance(int.class)) {
               new_params[i] = integer_options[rand.nextInt(integer_options.length)];
             }
@@ -56,13 +65,41 @@ class Inspectee implements Runnable {
           }
           Object class_instance =
           Class.forName(className).newInstance();
-          System.out.println("  Input: " + Arrays.toString(new_params));
-          System.out.println("  Returned: " + m.invoke(class_instance, new_params));
-          System.out.println("  Is recursive or not: " );
+          // Tell the inspector to start monitoring
+            System.out.println("RELEASED INSPECTOR");
+          synchronized (lock) {
+              lock.notifyAll();
+          }
+          // Add slight delay to allow the inspector to begin collecting data
+            try {
+              Thread.sleep(50);
+          } catch(Exception e){}
+          System.out.println("INVOKING");
+          m.invoke(class_instance, new_params);
+            // Add slight delay to allow the inspector to finish up
+            try {
+                Thread.sleep(50);
+            } catch(Exception e){}
+            try {
+                System.out.println("INSPECTEE IS WAITING");
+                synchronized (lock) {
+                    lock.wait();
+                }
+            } catch (Exception e){}
+
+          //System.out.println("  Input: " + Arrays.toString(new_params));
+          //System.out.println("  Returned: " + m.invoke(class_instance, new_params));
+          //System.out.println("  Is recursive or not: " );
         } catch(Throwable e) {
           System.out.println("Exception thrown during method execution: " + e);
         }
       }
+      try {
+            System.out.println("FINISHED");
+            synchronized (lock){
+                lock.notifyAll();
+            }
+      } catch (Exception e) {}
     }
     
     /**

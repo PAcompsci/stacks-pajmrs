@@ -7,6 +7,11 @@ public class TestClass {
         if (n == 0) {
             return 0;
         } else {
+            /*try {
+                Thread.sleep(50);
+            } catch(InterruptedException e) {
+
+            }*/
             return n + addRecursive(n - 1);
         }
     }
