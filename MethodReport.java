@@ -28,6 +28,8 @@ public class MethodReport{
     return timeline;
   }
 
+  public void setTimeline(LinkedList<Stack<String>> timeline) { this.timeline = timeline;}
+
   /**
   * Return true if the method is recursive (branched or otherwise).
   */
@@ -40,6 +42,10 @@ public class MethodReport{
       previous = timeline.get(r).peek();
     }
     return false;
+  }
+
+  private void cleanUpTimeline() {
+    // TODO: clean up timeline to remove unneeded entries and entries that do not contain the method represented by methodreport.
   }
 
   /**

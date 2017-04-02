@@ -84,7 +84,7 @@
    * Returns the contents of the stack in a readable format
    */
   public String toString() {
-    return contents + "";
+    return contents.toString() + "";
   }
 
   public LinkedList<T> allElements() {

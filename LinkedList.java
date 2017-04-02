@@ -87,6 +87,12 @@ public class LinkedList<T> {
           throw new IllegalArgumentException();
       }
       // Handle special case for 0
+
+        // Handle case where the current node is uninitialized
+        if (this.contents == null && index == 0) {
+            this.contents = o;
+            return true;
+        }
       if (index == 0) {
           LinkedList<T> tmp = new LinkedList<T>(o);
           tmp.next = this.copy();
