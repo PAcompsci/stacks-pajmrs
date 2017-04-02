@@ -204,8 +204,10 @@ public class LinkedList<T> {
         // Handle special case for 0
         if (index == 0) {
             T save_contents = this.contents;
-            this.contents = this.next.contents;
-            this.next = this.next.next;
+            if (this.next != null) {
+                this.contents = this.next.contents;
+                this.next = this.next.next;
+            }
             return save_contents;
         }
       LinkedList<T> prev = null;

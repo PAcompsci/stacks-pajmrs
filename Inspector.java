@@ -98,13 +98,13 @@ public class Inspector implements Runnable{
   }
 
    public static void main(String args[]) {
-      org.junit.runner.JUnitCore.main("TestClass");
-     Inspectee R2 = new Inspectee("TestClass");
-     Inspector R1 = new Inspector(R2.getT());
-     R2.setLock(R1.getLock());
-     R1.start();
-     R2.start();
+     //org.junit.runner.JUnitCore.main("TestClass");
+     //Inspectee R2 = new Inspectee("TestClass");
+     //Inspector R1 = new Inspector(R2.getT());
+     //R2.setLock(R1.getLock());
+     //R1.start();
+     //R2.start();
      //R1.InspectAll(args[0]);
-
+      LinkedList<String> test
     }
 }
