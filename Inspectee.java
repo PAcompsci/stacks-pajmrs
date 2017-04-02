@@ -41,6 +41,8 @@ class Inspectee implements Runnable {
     }
 
     public void run() throws NullPointerException {
+        int n = 10000;
+
         if (lock == null) {
             throw new NullPointerException();
         }
@@ -65,27 +67,10 @@ class Inspectee implements Runnable {
           }
           Object class_instance =
           Class.forName(className).newInstance();
-          // Tell the inspector to start monitoring
-            System.out.println("RELEASED INSPECTOR");
-          synchronized (lock) {
-              lock.notifyAll();
-          }
-          // Add slight delay to allow the inspector to begin collecting data
-            try {
-              Thread.sleep(50);
-          } catch(Exception e){}
           System.out.println("INVOKING");
-          m.invoke(class_instance, new_params);
-            // Add slight delay to allow the inspector to finish up
-            try {
-                Thread.sleep(50);
-            } catch(Exception e){}
-            try {
-                System.out.println("INSPECTEE IS WAITING");
-                synchronized (lock) {
-                    lock.wait();
-                }
-            } catch (Exception e){}
+          for (int i = 0; i < n; i++){
+                m.invoke(class_instance, new_params);
+            }
 
           //System.out.println("  Input: " + Arrays.toString(new_params));
           //System.out.println("  Returned: " + m.invoke(class_instance, new_params));
@@ -94,12 +79,6 @@ class Inspectee implements Runnable {
           System.out.println("Exception thrown during method execution: " + e);
         }
       }
-      try {
-            System.out.println("FINISHED");
-            synchronized (lock){
-                lock.notifyAll();
-            }
-      } catch (Exception e) {}
     }
     
     /**

@@ -21,12 +21,15 @@ public class Inspector implements Runnable{
   private Thread t;
   private Thread inspecteeThread;
 
+  private ArrayList<Map<Thread, StackTraceElement[]>> data;
+  private Boolean is_terminated = false;
   private final Object lock = new Object();
 
-  public Inspector(Thread iT){
-    inspecteeThread = iT;
+  public Inspector(){
+    inspecteeThread = null;
     integer_options = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14};
     string_options = new String[]{"dog", "cat," ,"house", "computer science"};
+    data = null;
   }
 
   public Object getLock() {
@@ -41,7 +44,23 @@ public class Inspector implements Runnable{
     * in the class
     */
     private ArrayList<MethodReport> InspectAll(String className) throws NotImplementedException{
-      throw new NotImplementedException();
+      Inspectee R2 = new Inspectee(className);
+      this.inspecteeThread = R2.getT();
+      this.start();
+      R2.start();
+
+      while (true) {
+        Boolean tmp;
+        synchronized(is_terminated) {
+          tmp = is_terminated;
+        }
+        if (tmp.equals(true)) break;
+      }
+
+      ArrayList<MethodReport> report = R2.getReport();
+      for (int i = 0; i < report.size(); i++) {
+        report.get(i).get
+      }
   }
 
 
@@ -51,44 +70,23 @@ public class Inspector implements Runnable{
     ArrayList<Map<Thread, StackTraceElement[]>> list = new ArrayList<Map<Thread, StackTraceElement[]>>();
       while(inspecteeThread.getState()!=Thread.State.TERMINATED)
       {
-        // Wait for the Inspectee to be prepared to execute each method
-        try {
-          System.out.println("INSPECTOR IS WAITING");
-          synchronized (lock) {
-            lock.wait();
-          }
-        } catch(Exception e){}
-
-        try {
-          Thread.sleep(50);
-        } catch(Exception e){}
-        if(inspecteeThread.getState()==Thread.State.TERMINATED) {
-          break;
-        }
-
-        // Poll until thread is runnable
-        while (inspecteeThread.getState() != Thread.State.RUNNABLE);
-        while (inspecteeThread.getState()!=Thread.State.WAITING) {
-          list.add(Thread.getAllStackTraces());
-        }
-        // Unblock the inspectee thread
-        System.out.println("RELEASTED INSPECTEE");
-        synchronized(lock) {
-          lock.notifyAll();
-        }
-
+        list.add(Thread.getAllStackTraces());
         counter++;
 
-      }
-      synchronized (lock) {
-        lock.notifyAll();
       }
       for (int i = 0; i < list.size(); i++) {
         System.out.println(Arrays.toString(list.get(i).get(inspecteeThread)));
       }
+
+      this.data = list;
       //System.out.println(Arrays.toString(stacks.get(inspecteeThread)));
 
       System.out.println("LOOPED " + counter + " TIMES");
+
+
+      synchronized(is_terminated) {
+        is_terminated = true;
+      }
   }
 
   public void start () {
@@ -100,12 +98,13 @@ public class Inspector implements Runnable{
   }
 
    public static void main(String args[]) {
-     Inspectee R2 = new Inspectee("TestClass");
-     Inspector R1 = new Inspector(R2.getT());
-     R2.setLock(R1.getLock());
-     R1.start();
-     R2.start();
+     //org.junit.runner.JUnitCore.main("TestClass");
+     //Inspectee R2 = new Inspectee("TestClass");
+     //Inspector R1 = new Inspector(R2.getT());
+     //R2.setLock(R1.getLock());
+     //R1.start();
+     //R2.start();
      //R1.InspectAll(args[0]);
-
+      LinkedList<String> test
     }
 }

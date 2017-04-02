@@ -21,15 +21,18 @@ public class MethodReport{
     methodName = name;
   }
 
+  /**
+  * Returns timeline
+  */
   public LinkedList getTimeline() {
     return timeline;
   }
 
+  public void setTimeline(LinkedList<Stack<String>> timeline) { this.timeline = timeline;}
+
   /**
   * Return true if the method is recursive (branched or otherwise).
   */
-
-  // not done
   public boolean isRecursive() {
     String previous = "";
     for (int r = 0; r < timeline.size(); r++) {
@@ -41,7 +44,13 @@ public class MethodReport{
     return false;
   }
 
-  // not done
+  private void cleanUpTimeline() {
+    // TODO: clean up timeline to remove unneeded entries and entries that do not contain the method represented by methodreport.
+  }
+
+  /**
+  * Checks if a method is recursive (branched)
+  */
   public boolean isBranchedRecursive() {
     //if it goes up by one
     //branch recursion would be multiple calls ina stack but not increasing/decreasing by one
@@ -83,7 +92,6 @@ public class MethodReport{
         }
       }
     }
-
     return false;
   }
 }

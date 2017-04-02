@@ -93,7 +93,6 @@ public class LinkedList<T> {
         // Handle case where the current node is uninitialized
         if (this.contents == null && index == 0) {
             this.contents = o;
-            System.out.println("Returned null");
             return true;
         }
       if (index == 0) {
