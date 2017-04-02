@@ -76,7 +76,7 @@
   public int search(T o) {
     int index = contents.indexOf(o);
     if(index == -1) return -1;
-    return index+1;
+    return index;
 
   }
 
@@ -84,10 +84,28 @@
    * Returns the contents of the stack in a readable format
    */
   public String toString() {
-    return contents + "";
+    return contents.toString();
   }
 
+
+  /**
+   * Returns the contents of the stack in a LinkedList
+   */
   public LinkedList<T> allElements() {
     return contents;
   }
+
+  public static void main(String[] args) {
+    // Stack<String> stack1 = new Stack<String>();
+    // stack1.push("hello");
+    // stack1.push("sam");
+    // stack1.push("ryan");
+    // stack1.pop();
+    // stack1.pop();
+    // System.out.println("Pop last here:");
+    // stack1.pop();
+    // System.out.println(stack1.toString());
+    org.junit.runner.JUnitCore.main("StackTestingClass");
+  }
+
 }

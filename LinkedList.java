@@ -84,9 +84,18 @@ public class LinkedList<T> {
      */
     public boolean add(int index, T o) throws IllegalArgumentException{
       if (o == null || index < 0 || index >= this.size()) {
+        if (index != 0) {
           throw new IllegalArgumentException();
+        }
       }
       // Handle special case for 0
+
+        // Handle case where the current node is uninitialized
+        if (this.contents == null && index == 0) {
+            this.contents = o;
+            System.out.println("Returned null");
+            return true;
+        }
       if (index == 0) {
           LinkedList<T> tmp = new LinkedList<T>(o);
           tmp.next = this.copy();
@@ -169,10 +178,22 @@ public class LinkedList<T> {
     public int size(){
       LinkedList<T> last=this;
       int counter=0;
-      while(last!=null){
+      if (this.contents==null) {
+        System.out.println("Counter = zero");
+
+        return 0;
+      }
+      else if (this.next == null) {
+        System.out.println("Counter = one");
+
+        return 1;
+      }
+      counter++;
+      while(last.next!=null){
         last=last.next;
         counter++;
       }
+      System.out.println("Counter = " + counter);
       return counter;
     }
 
@@ -193,13 +214,24 @@ public class LinkedList<T> {
      */
     public T remove(int index) throws IllegalArgumentException{
         if (index < 0 || index >= this.size()) {
+          if (index != 0) {
             throw new IllegalArgumentException();
+          }
+          else {
+            System.out.println("size is actually zero finally");
+          }
         }
         // Handle special case for 0
         if (index == 0) {
+          System.out.println("This should be called to signify last element being deleted");
             T save_contents = this.contents;
-            this.contents = this.next.contents;
-            this.next = this.next.next;
+            if (this.next != null) {
+                this.contents = this.next.contents;
+                this.next = this.next.next;
+            }
+            else {
+              this.contents = null;
+            }
             return save_contents;
         }
       LinkedList<T> prev = null;
@@ -225,7 +257,13 @@ public class LinkedList<T> {
     		str += last.contents.toString() + ", ";
     		last = last.next;
     	}
-    	str += last.contents.toString() + "]";
+      if (last.contents == null) {
+        str += "]";
+      }
+      else {
+        str += last.contents.toString() + "]";
+
+      }
     	return str;
     }
 }
