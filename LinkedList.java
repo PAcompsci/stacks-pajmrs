@@ -2,7 +2,7 @@
  * A basic implementation of a LinkedList.  Note that the generic type `T`
  * is being used here.
  *
- * Author: Jocelyn Shen, Sam Xifaras, Ryan Goggins, Oliver Pennington
+ * Author: Ryan Goggins, Sam Xifaras, Jocelyn Shen, Michelle Chao
  * Date: March 23, 2017
  * Course: CSC630 Data Structures and Algorithms
  */
