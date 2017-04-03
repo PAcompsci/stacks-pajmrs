@@ -80,6 +80,19 @@
 
   }
 
+    /**
+     * Inverts the stack, putting the last element at the head, etc.
+     * @return
+     * The inverted stack
+     */
+  public Stack<T> invert() {
+      Stack<T> inverted = new Stack<T>();
+      for (int i = 0; i < contents.size(); i++) {
+          inverted.push(contents.get(i));
+      }
+      return inverted;
+  }
+
   /**
    * Returns the contents of the stack in a readable format
    */

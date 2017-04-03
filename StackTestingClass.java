@@ -79,6 +79,19 @@ public class StackTestingClass {
     assertThat(st, equalTo("[ryan, hello]"));
   }
 
+  @Test
+  public void testInvert() {
+    stack1 = new Stack<String>();
+    stack1.push("1");
+    stack1.push("2");
+    stack1.push("3");
+
+    Stack<String> stack2 = stack1.invert();
+    assertThat(stack2.pop(), equalTo("1"));
+    assertThat(stack2.pop(), equalTo("2"));
+    assertThat(stack2.pop(), equalTo("3"));
+  }
+
   // @Test DONT NEED TO TEST THE GETTER
   // public void testAllElements() {
   //   stack1.push("hello");

@@ -136,6 +136,26 @@ public class LinkedList<T> {
     }
 
     /**
+     * Sets value at specified index
+     * @param index
+     *      The index at which to set a value
+     * @param value
+     *      The value to set
+     * @throws IllegalArgumentException
+     */
+    public void set(int index, T value) throws IllegalArgumentException{
+        if (index < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        LinkedList<T> last = this;
+        for (int i = 0; i < index; i++){
+            last = last.next;
+        }
+        last.contents = value;
+    }
+
+    /**
     * Checks through the list to see if there exist
     * any objects with contents the same as o
     *

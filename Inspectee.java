@@ -23,8 +23,8 @@ class Inspectee implements Runnable {
       className = clazz;
       integer_options = new int[]{0, 1, 10, 50, 100};//1,2,3,4,5,6,7,8,9,10,11,12,13,14};
       string_options = new String[]{"dog", "cat," ,"house", "computer science"};
-      t = new Thread(this, "Inspectee object's thread");
       report = this.getMethods(this.className);//new ArrayList<MethodReport>()
+      t = new Thread(this, "Inspectee object's thread");
       this.executionCount = 10000;
     }
 
@@ -65,7 +65,6 @@ class Inspectee implements Runnable {
           }
           Object class_instance =
           Class.forName(className).newInstance();
-          System.out.println("INVOKING");
           for (int i = 0; i < this.executionCount; i++){
                 m.invoke(class_instance, new_params);
             }
@@ -117,6 +116,9 @@ class Inspectee implements Runnable {
     }
 
     public void start() {
-        t.start();
+        if (t != null) {
+            t.setPriority(Thread.MIN_PRIORITY);
+            t.start();
+        }
     }
 }

@@ -17,16 +17,32 @@ import java.util.*;
 public class UnitTests {
 
     @Test
-    public void testDataCollection() {
+    public void testIsRecursive() {
+        // NOTE: Not guaranteed to succeed
+
         Inspector ins = new Inspector();
         ArrayList<MethodReport> report = ins.InspectAll("TestClass");
         for (MethodReport r : report) {
             if (r.getMethodName() == "addRecursive") {
                 assertTrue(r.isRecursive());
-                //assertFalse(r.isBranchedRecursive());
             }
             if (r.getMethodName() == "notRecursive") {
                 assertFalse(r.isRecursive());
+            }
+        }
+    }
+
+    @Test
+    public void testIsBranchedRecursive() {
+        Inspector ins = new Inspector();
+        ArrayList<MethodReport> report = ins.InspectAll("TestClass");
+        for (MethodReport r : report) {
+            if (r.getMethodName() == "addRecursive") {
+                boolean val = r.isBranchedRecursive();
+                assertFalse(val);
+            }
+            if (r.getMethodName() == "notRecursive") {
+                //assertFalse(r.isBranchedRecursive());
             }
         }
     }

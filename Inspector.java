@@ -15,6 +15,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.util.*;
 import java.lang.reflect.*;
 
+import static org.junit.Assert.assertFalse;
+
 public class Inspector implements Runnable{
   private int[] integer_options;
   private String[] string_options;
@@ -60,20 +62,37 @@ public class Inspector implements Runnable{
       for (int i = 0; i < data.size(); i++) {
         Stack<String> entry = new Stack<String>();
         StackTraceElement[] elements = data.get(i).get(inspecteeThread);
-        try {
-          for (int j = elements.length - 1; j >= 0; j--) {
-            entry.push(elements[j].getMethodName());
-          }
-          timeline.add(entry);
+        if (elements == null) continue;
+        for (int j = elements.length - 1; j >= 0; j--) {
+          entry.push(elements[j].getMethodName());
         }
-        catch (NullPointerException e) {
-          e.printStackTrace();
-        }
+        timeline.add(entry);
       }
 
       // Clean up the timeline by removing any entries that do not have a method from the class on the top
       for (int i = 0; i < timeline.size(); i++) {
-        if (methodNames.contains(timeline.get(i).peek()) == false) {
+        // Remove non-class methods from the top of the stack
+        while ((!methodNames.contains(timeline.get(i).peek())) && (timeline.get(i).allElements().size() != 0)) {
+          timeline.get(i).pop();
+          //i--;
+        }
+
+        // Remove stack trace if it has no elements left
+        if (timeline.get(i).allElements().size() == 0) {
+          timeline.remove(i);
+          i--;
+          continue;
+        }
+
+        // Remove non-class methods from the bottom of the stack
+        Stack<String> inverted = timeline.get(i).invert();
+        while ((!methodNames.contains(inverted.peek())) && (inverted.allElements().size() != 0)) {
+          inverted.pop();
+        }
+        timeline.set(i, inverted.invert());
+
+        // Remove stack trace if it has no elements left
+        if (timeline.get(i).allElements().size() == 0) {
           timeline.remove(i);
           i--;
         }
@@ -96,9 +115,9 @@ public class Inspector implements Runnable{
         list.add(Thread.getAllStackTraces());
         counter++;
       }
-      for (int i = 0; i < list.size(); i++) {
-        System.out.println(Arrays.toString(list.get(i).get(inspecteeThread)));
-      }
+      //for (int i = 0; i < list.size(); i++) {
+      //  System.out.println(Arrays.toString(list.get(i).get(inspecteeThread)));
+      //}
 
       this.data = list;
       //System.out.println(Arrays.toString(stacks.get(inspecteeThread)));
@@ -115,6 +134,17 @@ public class Inspector implements Runnable{
   }
 
    public static void main(String args[]) {
-     org.junit.runner.JUnitCore.main("UnitTests");
+     Inspector ins = new Inspector();
+     ArrayList<MethodReport> report = ins.InspectAll("TestClass");
+     for (MethodReport r : report) {
+       if (r.getMethodName() == "addRecursive") {
+         boolean val = r.isBranchedRecursive();
+       }
+       if (r.getMethodName() == "notRecursive") {
+         //assertFalse(r.isBranchedRecursive());
+       }
+     }
+      //org.junit.runner.JUnitCore.main("UnitTests");
+
     }
 }
