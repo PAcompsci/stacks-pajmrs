@@ -10,7 +10,7 @@
  
  /*
  
- NOTE: While we were able to successfully obtained stack traces from recursive functions, we
+ NOTE: While we were able to successfully obtain stack traces from recursive functions, we
  were unable to determine from the stack traces if the method was or was not
  a recursive function. 
  */
