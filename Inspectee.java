@@ -11,12 +11,13 @@ import java.util.*;
 import java.lang.reflect.*;
 
 class Inspectee implements Runnable {
+    // options for parameters in method invoking
     private int[] integer_options;
     private String[] string_options;
     private char[] char_options;
     private boolean[] boolean_options;
+    
     private Thread t;
-    private Thread inspecteeThread;
     private Method[] methods;
     ArrayList<MethodReport> report;
     private String className;

@@ -50,7 +50,7 @@
    */
   public T pop() {
     return contents.remove(0);
-    //add it to index 0
+    // add it to index 0
 
   }
 
