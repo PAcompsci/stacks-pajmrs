@@ -178,13 +178,9 @@ public class LinkedList<T> {
       LinkedList<T> last=this;
       int counter=0;
       if (this.contents==null) {
-        System.out.println("Counter = zero");
-
         return 0;
       }
       else if (this.next == null) {
-        System.out.println("Counter = one");
-
         return 1;
       }
       counter++;
@@ -192,7 +188,6 @@ public class LinkedList<T> {
         last=last.next;
         counter++;
       }
-      System.out.println("Counter = " + counter);
       return counter;
     }
 
@@ -222,7 +217,6 @@ public class LinkedList<T> {
         }
         // Handle special case for 0
         if (index == 0) {
-          System.out.println("This should be called to signify last element being deleted");
             T save_contents = this.contents;
             if (this.next != null) {
                 this.contents = this.next.contents;

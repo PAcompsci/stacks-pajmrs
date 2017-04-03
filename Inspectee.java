@@ -15,22 +15,25 @@ class Inspectee implements Runnable {
     private Thread t;
     private Thread inspecteeThread;
     private Method[] methods;
-    ArrayList<MethodReport> report;
+    private ArrayList<MethodReport> report;
     private String className;
-
-    private Object lock;
-
-    public void setLock(Object obj) { this.lock = obj; }
-
-
+    private int executionCount;
 
     public Inspectee(String clazz) {
       className = clazz;
-      integer_options = new int[]{100};//1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+      integer_options = new int[]{0, 1, 10, 50, 100};//1,2,3,4,5,6,7,8,9,10,11,12,13,14};
       string_options = new String[]{"dog", "cat," ,"house", "computer science"};
       t = new Thread(this, "Inspectee object's thread");
-      report = this.getMethods(this.className);//new ArrayList<MethodReport>();
+      report = this.getMethods(this.className);//new ArrayList<MethodReport>()
+      this.executionCount = 10000;
     }
+
+    /**
+     * Sets the nunmber of times each method from the class will be executed. Default is 10000
+     * @param n
+     *  The new value for executionCount
+     */
+    public void setExecutionCount(int n) { this.executionCount = n; }
 
     public Thread getT() {
       return t;
@@ -41,11 +44,6 @@ class Inspectee implements Runnable {
     }
 
     public void run() throws NullPointerException {
-        int n = 10000;
-
-        if (lock == null) {
-            throw new NullPointerException();
-        }
       for(Method m: methods) {
         try {
           //System.out.println("\n" + m);
@@ -68,7 +66,7 @@ class Inspectee implements Runnable {
           Object class_instance =
           Class.forName(className).newInstance();
           System.out.println("INVOKING");
-          for (int i = 0; i < n; i++){
+          for (int i = 0; i < this.executionCount; i++){
                 m.invoke(class_instance, new_params);
             }
 

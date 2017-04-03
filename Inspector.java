@@ -20,20 +20,13 @@ public class Inspector implements Runnable{
   private String[] string_options;
   private Thread t;
   private Thread inspecteeThread;
-
   private ArrayList<Map<Thread, StackTraceElement[]>> data;
-  private Boolean is_terminated = false;
-  private final Object lock = new Object();
 
   public Inspector(){
     inspecteeThread = null;
     integer_options = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14};
     string_options = new String[]{"dog", "cat," ,"house", "computer science"};
     data = null;
-  }
-
-  public Object getLock() {
-    return lock;
   }
 
     /**
@@ -43,24 +36,54 @@ public class Inspector implements Runnable{
     * @return an ArrayList containing MethodReport objects for each method
     * in the class
     */
-    private ArrayList<MethodReport> InspectAll(String className) throws NotImplementedException{
+    public ArrayList<MethodReport> InspectAll(String className) throws NotImplementedException{
       Inspectee R2 = new Inspectee(className);
       this.inspecteeThread = R2.getT();
       this.start();
       R2.start();
 
-      while (true) {
-        Boolean tmp;
-        synchronized(is_terminated) {
-          tmp = is_terminated;
-        }
-        if (tmp.equals(true)) break;
+      // Poll until the thread is terminated
+      while (this.t.getState()!=Thread.State.TERMINATED) {
+        try { Thread.sleep(50); } catch (Exception e) {}
       }
 
       ArrayList<MethodReport> report = R2.getReport();
+
+      // Create a list of method names
+      ArrayList<String> methodNames = new ArrayList<String>();
       for (int i = 0; i < report.size(); i++) {
-        report.get(i).get
+        methodNames.add(report.get(i).getMethodName());
       }
+
+      // Create the timeline object by getting method names of all the StackTraceElement objects that belong to the Inspectee thread
+      LinkedList<Stack<String>> timeline = new LinkedList<Stack<String>>();
+      for (int i = 0; i < data.size(); i++) {
+        Stack<String> entry = new Stack<String>();
+        StackTraceElement[] elements = data.get(i).get(inspecteeThread);
+        try {
+          for (int j = elements.length - 1; j >= 0; j--) {
+            entry.push(elements[j].getMethodName());
+          }
+          timeline.add(entry);
+        }
+        catch (NullPointerException e) {
+          e.printStackTrace();
+        }
+      }
+
+      // Clean up the timeline by removing any entries that do not have a method from the class on the top
+      for (int i = 0; i < timeline.size(); i++) {
+        if (methodNames.contains(timeline.get(i).peek()) == false) {
+          timeline.remove(i);
+          i--;
+        }
+      }
+
+      for (int i = 0; i < report.size(); i++) {
+        report.get(i).setTimeline(timeline);
+      }
+
+      return report;
   }
 
 
@@ -72,7 +95,6 @@ public class Inspector implements Runnable{
       {
         list.add(Thread.getAllStackTraces());
         counter++;
-
       }
       for (int i = 0; i < list.size(); i++) {
         System.out.println(Arrays.toString(list.get(i).get(inspecteeThread)));
@@ -82,11 +104,6 @@ public class Inspector implements Runnable{
       //System.out.println(Arrays.toString(stacks.get(inspecteeThread)));
 
       System.out.println("LOOPED " + counter + " TIMES");
-
-
-      synchronized(is_terminated) {
-        is_terminated = true;
-      }
   }
 
   public void start () {
@@ -98,13 +115,6 @@ public class Inspector implements Runnable{
   }
 
    public static void main(String args[]) {
-     //org.junit.runner.JUnitCore.main("TestClass");
-     //Inspectee R2 = new Inspectee("TestClass");
-     //Inspector R1 = new Inspector(R2.getT());
-     //R2.setLock(R1.getLock());
-     //R1.start();
-     //R2.start();
-     //R1.InspectAll(args[0]);
-      LinkedList<String> test
+     org.junit.runner.JUnitCore.main("UnitTests");
     }
 }

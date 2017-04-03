@@ -28,6 +28,8 @@ public class MethodReport{
     return timeline;
   }
 
+  public String getMethodName() { return this.methodName; }
+
   public void setTimeline(LinkedList<Stack<String>> timeline) { this.timeline = timeline;}
 
   /**
@@ -42,10 +44,6 @@ public class MethodReport{
       previous = timeline.get(r).peek();
     }
     return false;
-  }
-
-  private void cleanUpTimeline() {
-    // TODO: clean up timeline to remove unneeded entries and entries that do not contain the method represented by methodreport.
   }
 
   /**
