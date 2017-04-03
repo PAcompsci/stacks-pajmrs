@@ -1,14 +1,19 @@
 /**
- * Inspects a class for its methods. If the methods have primitive arguments,
- * the Inspector calls these methods with arguments.
+ * Inspects a class for its methods. If the methods have primitive or common
+ * arguments, the Inspector calls these methods with arguments.
  *
  * Author: Jocelyn Shen, Michelle Chao, Sam Xifaras, Ryan Goggins
- * Date: March 28, 2017
+ * Date: April 2, 2017
  * Sources: Java reflect API
  *          http://stackoverflow.com/questions/6094575/creating-an-instance-using-the-class-name-and-calling-constructor
  */
-
-// A lot of method calls don't work with the LinkedList class because of recursive next
+ 
+ /*
+ 
+ NOTE: While we were able to successfully obtained stack traces from recursive functions, we
+ were unable to determine from the stack traces if the method was or was not
+ a recursive function. 
+ */
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -18,16 +23,12 @@ import java.lang.reflect.*;
 import static org.junit.Assert.assertFalse;
 
 public class Inspector implements Runnable{
-  private int[] integer_options;
-  private String[] string_options;
   private Thread t;
   private Thread inspecteeThread;
   private ArrayList<Map<Thread, StackTraceElement[]>> data;
 
-  public Inspector(){
+  public Inspector() {
     inspecteeThread = null;
-    integer_options = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14};
-    string_options = new String[]{"dog", "cat," ,"house", "computer science"};
     data = null;
   }
 
@@ -72,7 +73,8 @@ public class Inspector implements Runnable{
       // Clean up the timeline by removing any entries that do not have a method from the class on the top
       for (int i = 0; i < timeline.size(); i++) {
         // Remove non-class methods from the top of the stack
-        while ((!methodNames.contains(timeline.get(i).peek())) && (timeline.get(i).allElements().size() != 0)) {
+        while ((!methodNames.contains(timeline.get(i).peek())) && 
+               (timeline.get(i).allElements().size() != 0)) {
           timeline.get(i).pop();
           //i--;
         }
@@ -106,8 +108,7 @@ public class Inspector implements Runnable{
   }
 
 
-  public void run()
-  {
+  public void run() {
     int counter = 0;
     ArrayList<Map<Thread, StackTraceElement[]>> list = new ArrayList<Map<Thread, StackTraceElement[]>>();
       while(inspecteeThread.getState()!=Thread.State.TERMINATED)
@@ -115,16 +116,12 @@ public class Inspector implements Runnable{
         list.add(Thread.getAllStackTraces());
         counter++;
       }
-      //for (int i = 0; i < list.size(); i++) {
-      //  System.out.println(Arrays.toString(list.get(i).get(inspecteeThread)));
-      //}
 
       this.data = list;
-      //System.out.println(Arrays.toString(stacks.get(inspecteeThread)));
 
       System.out.println("LOOPED " + counter + " TIMES");
   }
-
+  
   public void start () {
       if (t == null) {
           t = new Thread(this, "Inspector object's thread");
@@ -144,7 +141,7 @@ public class Inspector implements Runnable{
          //assertFalse(r.isBranchedRecursive());
        }
      }
-      //org.junit.runner.JUnitCore.main("UnitTests");
+      org.junit.runner.JUnitCore.main("UnitTests");
 
     }
 }

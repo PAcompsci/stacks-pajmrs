@@ -1,39 +1,41 @@
 /**
- * A mininmal working example of a thread, set up to work with an
- * Inspector object.
+ * The Inspectee class works with conjunction with the Inspector class. The
+ * Inspectee class runs the test-class methods, and the Inspector class 
+ * observes the stack traces in the Inspectee class.
  *
- * Author: Nicholas Zufelt
- * Date: March 28, 2017
- * Course: CSC630: Data Structures and Algorithms
+ * Author: Jocelyn Shen, Michelle Chao, Sam Xifaras, Ryan Goggins
+ * April 2, 2017
  */
+ 
 import java.util.*;
 import java.lang.reflect.*;
 
 class Inspectee implements Runnable {
     private int[] integer_options;
     private String[] string_options;
+    private char[] char_options;
+    private boolean[] boolean_options;
     private Thread t;
     private Thread inspecteeThread;
     private Method[] methods;
-    private ArrayList<MethodReport> report;
+    ArrayList<MethodReport> report;
     private String className;
-    private int executionCount;
+    private Object lock;
+
+    public void setLock(Object obj) { 
+      this.lock = obj; 
+    }
 
     public Inspectee(String clazz) {
       className = clazz;
-      integer_options = new int[]{0, 1, 10, 50, 100};//1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+      integer_options = new int[]{100}; 
       string_options = new String[]{"dog", "cat," ,"house", "computer science"};
-      report = this.getMethods(this.className);//new ArrayList<MethodReport>()
+      char_options = new char[]{'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
+                      'p','q','r','s','t','u','v','w','x','y','z'};   
+      boolean_options = new boolean[]{true,false};
       t = new Thread(this, "Inspectee object's thread");
-      this.executionCount = 10000;
+      report = this.getMethods(this.className);
     }
-
-    /**
-     * Sets the nunmber of times each method from the class will be executed. Default is 10000
-     * @param n
-     *  The new value for executionCount
-     */
-    public void setExecutionCount(int n) { this.executionCount = n; }
 
     public Thread getT() {
       return t;
@@ -42,30 +44,46 @@ class Inspectee implements Runnable {
     public ArrayList<MethodReport> getReport() {
       return report;
     }
-
+    
+    // Runs the thread
     public void run() throws NullPointerException {
+        int n = 1;
+        // if (lock == null) {
+        //     throw new NullPointerException();
+        // }
       for(Method m: methods) {
+        // Go through each method and invoke it with parameters, if the appropriate
+        // parameters can be obtained.
         try {
-          //System.out.println("\n" + m);
+          System.out.println("\n" + m.getName());
           Class<?>[] p = m.getParameterTypes();
           Object[] new_params = new Object[p.length];
           for(int i = 0; i < p.length; i++) {
             Random rand = new Random();
-            //System.out.println(p[i]);
             if(p[i].isInstance(int.class)) {
+              // Parameter is an int
               new_params[i] = integer_options[rand.nextInt(integer_options.length)];
             }
             else if(p[i].isInstance(String.class)) {
+              // Parameter is a String
               new_params[i] = string_options[rand.nextInt(string_options.length)];
             }
+            else if(p[i].isInstance(char.class)) {
+              // Parameter is a character
+              new_params[i] = char_options[rand.nextInt(char_options.length)];
+            }
+            else if(p[i].isInstance(boolean.class)) {
+              // Parameter is a boolean
+              new_params[i] = boolean_options[rand.nextInt(boolean_options.length)];
+            }
             else {
-              // Unsure of how to deal with generic types
+              // Unsure of how to deal with generic parameter types
               new_params[i] = integer_options[rand.nextInt(integer_options.length)];
             }
           }
-          Object class_instance =
-          Class.forName(className).newInstance();
-          for (int i = 0; i < this.executionCount; i++){
+          Object class_instance = Class.forName(className).newInstance();
+          System.out.println("INVOKING");
+          for (int i = 0; i < n; i++){
                 m.invoke(class_instance, new_params);
             }
 
@@ -116,9 +134,12 @@ class Inspectee implements Runnable {
     }
 
     public void start() {
-        if (t != null) {
-            t.setPriority(Thread.MIN_PRIORITY);
-            t.start();
-        }
+        t.start();
+    }
+    
+    
+    public static void main(String[] args) {
+      Inspectee r = new Inspectee("TestClass");
+      r.run();
     }
 }
